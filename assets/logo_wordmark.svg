@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 160" fill="none">
+  <!-- Brush Calligraphy Typography "Yatra Now" in #ba5a0b -->
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@700&amp;family=Outfit:wght@800&amp;display=swap');
+      .brand-brush {
+        font-family: 'Caveat', cursive, sans-serif;
+        font-weight: 700;
+        font-size: 88px;
+        fill: #ba5a0b;
+        letter-spacing: 1px;
+      }
+      .brand-sub {
+        font-family: 'Outfit', sans-serif;
+        font-weight: 800;
+        font-size: 16px;
+        fill: #ba5a0b;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+      }
+    </style>
+  </defs>
+  <!-- Stylized Yatra Now Text -->
+  <text x="12" y="105" class="brand-brush">Yatra Now</text>
+  <text x="16" y="138" class="brand-sub">Smart Transit Network</text>
+  <!-- Decorative streak -->
+  <path d="M 125,72 Q 185,62 250,70" stroke="#ba5a0b" stroke-width="4" stroke-linecap="round"/>
+</svg>

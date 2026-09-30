@@ -1,0 +1,682 @@
+/* Interactive Sliding Sheets & Search Containers */
+/* High Performance GPU-Accelerated Animations for Low-End & High-End Devices */
+
+/* Fullscreen Map Canvas Wrapper */
+#map-viewport {
+  position: absolute;
+  top: 64px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  background: var(--bg-main);
+  transition: bottom var(--transition-smooth);
+}
+
+@media (max-width: 600px) {
+  #map-viewport {
+    top: 58px;
+  }
+}
+
+/* Floating "Where you want to go?" Bottom Bar */
+.bottom-search-bar {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 32px);
+  max-width: 540px;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sheet);
+  border: 1.5px solid var(--border-color);
+  padding: 14px 18px;
+  z-index: 200;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: transform var(--transition-smooth), opacity var(--transition-fast);
+}
+
+.bottom-search-bar.hidden {
+  transform: translate(-50%, 120%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.search-input-mock {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--bg-card-subtle);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+  color: var(--text-muted);
+  font-size: 1rem;
+  font-weight: 500;
+  transition: border-color var(--transition-fast);
+}
+
+.search-input-mock:hover {
+  border-color: var(--primary-brand);
+  color: var(--text-main);
+}
+
+.search-input-mock svg {
+  color: var(--primary-brand);
+  flex-shrink: 0;
+}
+
+/* Quick Service Chips */
+.quick-services-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scrollbar-width: none;
+}
+.quick-services-row::-webkit-scrollbar {
+  display: none;
+}
+
+.service-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-card-subtle);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-full);
+  padding: 6px 14px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-main);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.service-chip:hover {
+  background: var(--primary-glow);
+  border-color: var(--primary-brand);
+  color: var(--primary-brand);
+}
+
+/* Full Expanding Search Drawer (Slides Down / Up) */
+.search-drawer-overlay {
+  position: absolute;
+  top: 64px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(20, 13, 7, 0.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 300;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-smooth);
+}
+
+.search-drawer-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.search-drawer-content {
+  background: var(--bg-card);
+  border-bottom-left-radius: var(--radius-lg);
+  border-bottom-right-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  border: 1.5px solid var(--border-color);
+  border-top: none;
+  padding: 20px;
+  max-width: 640px;
+  width: 100%;
+  margin: 0 auto;
+  max-height: 85vh;
+  overflow-y: auto;
+  transform: translateY(-100%);
+  transition: transform var(--transition-smooth);
+}
+
+.search-drawer-overlay.active .search-drawer-content {
+  transform: translateY(0);
+}
+
+.drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.drawer-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--primary-brand);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-close-drawer {
+  background: var(--bg-card-subtle);
+  border: 1px solid var(--border-color);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-muted);
+}
+
+/* Route Origin & Destination Input Group */
+.route-inputs-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  background: var(--bg-card-subtle);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  border: 1px solid var(--border-color);
+}
+
+.route-input-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.input-node-indicator {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 3px solid var(--primary-brand);
+  background: #fff;
+  flex-shrink: 0;
+}
+
+.input-node-indicator.destination {
+  border-radius: 2px;
+  background: var(--primary-brand);
+}
+
+.input-node-indicator.via {
+  border-radius: 50%;
+  border-color: var(--color-warning);
+}
+
+.route-input-field {
+  flex: 1;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  color: var(--text-main);
+  transition: border-color var(--transition-fast);
+}
+
+.route-input-field:focus {
+  border-color: var(--primary-brand);
+}
+
+.btn-locate-me {
+  background: var(--primary-glow);
+  border: 1px solid var(--border-color);
+  color: var(--primary-brand);
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* "Select Place on Map" & "Add stops to drop friends" buttons */
+.route-aux-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 6px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.aux-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px dashed var(--primary-brand);
+  color: var(--primary-brand);
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.aux-btn:hover {
+  background: var(--primary-glow);
+}
+
+/* Multi-drop Stops Dynamic Container */
+.via-stops-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.via-stop-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: slide-in 0.25s ease-out;
+}
+
+.btn-remove-via {
+  background: transparent;
+  border: none;
+  color: var(--color-delayed);
+  cursor: pointer;
+  padding: 4px;
+}
+
+@keyframes slide-in {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Recently Searched Places */
+.recent-searches-box {
+  margin-top: 18px;
+}
+
+.section-subtitle {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 8px;
+}
+
+.recent-searches-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.recent-search-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: var(--bg-card-subtle);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.recent-search-item:hover {
+  border-color: var(--primary-brand);
+  background: var(--primary-glow);
+}
+
+.recent-route-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+/* Bottom Half-Sheet: Matching Buses List */
+.buses-half-sheet {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  max-width: 680px;
+  margin: 0 auto;
+  height: 52vh;
+  min-height: 280px;
+  background: var(--bg-card);
+  border-top-left-radius: var(--radius-lg);
+  border-top-right-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sheet);
+  border: 1.5px solid var(--border-color);
+  border-bottom: none;
+  z-index: 250;
+  display: flex;
+  flex-direction: column;
+  transform: translateY(120%);
+  transition: transform var(--transition-smooth);
+}
+
+.buses-half-sheet.active {
+  transform: translateY(0);
+}
+
+.sheet-drag-handle {
+  width: 44px;
+  height: 5px;
+  background: var(--border-color);
+  border-radius: var(--radius-full);
+  margin: 10px auto 4px auto;
+  cursor: grab;
+}
+
+.sheet-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 18px 12px 18px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.sheet-title-group h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.sheet-title-group span {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.buses-scrollable-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Individual Bus Card */
+.bus-card {
+  background: var(--bg-card-subtle);
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.bus-card:hover {
+  border-color: var(--primary-brand);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.bus-card.active-selected {
+  border-color: var(--primary-brand);
+  box-shadow: 0 0 0 2px var(--primary-brand);
+  background: var(--bg-card);
+}
+
+.bus-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.bus-primary-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.bus-badge-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-md);
+  background: var(--primary-brand);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1rem;
+}
+
+.bus-naming-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.bus-name-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.bus-reg-badge {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.bus-card-middle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-card);
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+}
+
+.bus-timing-node {
+  display: flex;
+  flex-direction: column;
+}
+
+.time-val {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--primary-brand);
+}
+
+.stop-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.route-arrow-flow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: var(--primary-brand);
+}
+
+/* Delay Banner in Red as Mandated */
+.delay-alert-tag {
+  color: var(--color-delayed);
+  font-weight: 800;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.bus-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  border-top: 1px solid rgba(186, 90, 11, 0.1);
+  padding-top: 8px;
+}
+
+.crew-tags {
+  display: flex;
+  gap: 10px;
+}
+
+/* Bus Detail & Sequential Stoppings Progressive View */
+.bus-detail-overlay {
+  position: absolute;
+  top: 64px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(20, 13, 7, 0.45);
+  backdrop-filter: blur(4px);
+  z-index: 350;
+  display: flex;
+  justify-content: flex-end;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-smooth);
+}
+
+.bus-detail-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.bus-detail-panel {
+  background: var(--bg-card);
+  width: 100%;
+  max-width: 480px;
+  height: 100%;
+  box-shadow: var(--shadow-lg);
+  border-left: 1.5px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform var(--transition-smooth);
+}
+
+.bus-detail-overlay.active .bus-detail-panel {
+  transform: translateX(0);
+}
+
+/* Real-Time Speedometer Gauge */
+.speedometer-card {
+  background: linear-gradient(135deg, var(--bg-card-subtle), var(--bg-card));
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  margin: 14px 18px 0 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.speed-display {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.speed-num {
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: var(--primary-brand);
+  line-height: 1;
+}
+
+.speed-unit {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+/* Sequential Stoppings Timeline */
+.stops-timeline-wrapper {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 20px;
+}
+
+.timeline-stop-item {
+  display: flex;
+  gap: 14px;
+  position: relative;
+  padding-bottom: 22px;
+}
+
+.timeline-stop-item::before {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 18px;
+  bottom: 0;
+  width: 2px;
+  background: var(--border-color);
+}
+
+.timeline-stop-item:last-child::before {
+  display: none;
+}
+
+.stop-marker-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  border: 3.5px solid var(--primary-brand);
+  z-index: 2;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.timeline-stop-item.passed .stop-marker-dot {
+  background: var(--primary-brand);
+}
+
+.timeline-stop-item.current .stop-marker-dot {
+  border-color: var(--color-ontime);
+  box-shadow: 0 0 10px rgba(22, 163, 74, 0.8);
+  animation: pulse-dot 1.5s infinite;
+}
+
+.stop-content {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.stop-name-text {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.stop-time-display {
+  text-align: right;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.stop-delayed-time {
+  color: var(--color-delayed);
+  font-weight: 800;
+}
