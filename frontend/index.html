@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Yatra Now — Real-Time Smart Bus Transit & Fleet Network</title>
+  <meta name="description" content="Yatra Now is a next-generation real-time local bus tracking, schedule finding, and fleet transit application with AES-256 encryption, 2FA security, and low-end mobile optimization." />
+  <meta name="theme-color" content="#ba5a0b" />
+  <link rel="manifest" href="./manifest.json" />
+
+  <!-- Google Fonts: Outfit for sleek modern UI -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <!-- Leaflet CSS for OpenStreetMap (Canvas-Optimized for Low-End Devices) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+  <!-- Yatra Now Master Stylesheets -->
+  <link rel="stylesheet" href="./css/theme.css" />
+  <link rel="stylesheet" href="./css/navbar.css" />
+  <link rel="stylesheet" href="./css/sheets.css" />
+  <link rel="stylesheet" href="./css/modals.css" />
+  <link rel="stylesheet" href="./css/portals.css" />
+</head>
+<body>
+
+  <!-- Universal Header Navigation Bar -->
+  <!-- STRICT RULE: NO ROLE CHANGER IN NAVBAR -->
+  <header class="yatra-navbar">
+    <!-- Brand Logo & Typography -->
+    <a href="#" class="navbar-brand" id="nav-brand-link">
+      <img src="./assets/logo_brand.png" alt="Yatra Now Logo" class="brand-bus-logo" />
+      <div class="brand-text-wrapper">
+        <span class="brand-fallback-name">Yatra Now</span>
+        <span class="brand-tagline">Smart Transit</span>
+      </div>
+    </a>
+
+    <!-- Center Telemetry & AES Security Pill -->
+    <div class="navbar-center">
+      <div class="network-status-pill">
+        <span class="status-dot"></span>
+        <span>Fleet Live GPS</span>
+      </div>
+      <div class="aes-pill" id="btn-aes-inspector" title="Click to view AES-256 Encryption Stream">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
+        <span>AES-256</span>
+      </div>
+    </div>
+
+    <!-- Right Actions: Theme Toggle, Settings, Profile -->
+    <div class="navbar-actions">
+      <!-- Dark/Light Theme Quick Switch -->
+      <button class="nav-icon-btn" id="btn-nav-theme" title="Toggle Dark/Light Mode">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+      </button>
+
+      <!-- Settings Icon -->
+      <button class="nav-icon-btn" id="btn-nav-settings" title="Settings">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+      </button>
+
+      <!-- Profile Button -->
+      <button class="nav-profile-btn" id="btn-nav-profile" title="View Profile">
+        <div class="nav-profile-avatar" id="nav-user-avatar">R</div>
+        <span class="nav-profile-name" id="nav-user-name">Rohan Sharma</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ========================================== -->
+  <!-- 1. PUBLIC COMMUTER VIEW                    -->
+  <!-- ========================================== -->
+
+  <!-- Fullscreen Live Map Container -->
+  <div id="map-viewport"></div>
+
+  <!-- Floating Bottom Bar: "Where do you want to go?" -->
+  <div class="bottom-search-bar" id="bottom-search-bar">
+    <div class="search-input-mock">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      <span>Where do you want to go?</span>
+    </div>
+    <!-- Quick Transit Services Chips -->
+    <div class="quick-services-row">
+      <div class="service-chip" id="chip-nearest-stop">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+        </svg>
+        <span>Nearest Bus Stop</span>
+      </div>
+      <div class="service-chip" id="chip-search-busno">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M4 16c0 .88.39 1.67 1 2.22V20c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h8v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1.78c.61-.55 1-1.34 1-2.22V6c0-3.5-3.58-4-8-4s-8 .5-8 4v10z"/>
+        </svg>
+        <span>Search by Bus #</span>
+      </div>
+      <div class="service-chip" id="chip-depot-locator">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10z"/>
+        </svg>
+        <span>Depots</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Full Expanding Search Drawer (Slides Down / Up) -->
+  <div class="search-drawer-overlay" id="search-drawer-overlay">
+    <div class="search-drawer-content">
+      <div class="drawer-header">
+        <div class="drawer-title">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          Plan Your Bus Journey
+        </div>
+        <button class="btn-close-drawer" id="btn-close-search">✕</button>
+      </div>
+
+      <!-- Route Origin & Destination Inputs -->
+      <div class="route-inputs-wrapper">
+        <!-- Starting Point -->
+        <div class="route-input-row">
+          <span class="input-node-indicator"></span>
+          <input type="text" id="input-origin" class="route-input-field" placeholder="Enter starting station or bus stop..." value="Central Bus Terminal" />
+          <button class="btn-locate-me" id="btn-locate-origin" title="Use GPS Location">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polygon points="3 11 22 2 13 21 11 13 3 11"></polygon>
+            </svg>
+            GPS
+          </button>
+        </div>
+
+        <!-- Dynamic Drop-Friends Via Stops Container -->
+        <div class="via-stops-list" id="via-stops-container"></div>
+
+        <!-- Destination Point -->
+        <div class="route-input-row">
+          <span class="input-node-indicator destination"></span>
+          <input type="text" id="input-destination" class="route-input-field" placeholder="Enter destination point or station..." value="Tech Valley Metro Complex" />
+        </div>
+
+        <!-- Aux Actions: Select on Map & Add stops to drop friends -->
+        <div class="route-aux-actions">
+          <button class="aux-btn" id="btn-map-origin">
+            📍 Select Start on Map
+          </button>
+          <button class="aux-btn" id="btn-map-dest">
+            🏁 Select Destination on Map
+          </button>
+          <button class="aux-btn" id="btn-add-drop-friend">
+            👥 + Add Stops to Drop Friends
+          </button>
+        </div>
+      </div>
+
+      <button id="btn-find-buses" class="btn btn-primary" style="width:100%;margin-top:14px;padding:12px;font-size:1.05rem;">
+        🚌 Find Live Operating Buses
+      </button>
+
+      <!-- Recently Searched Places Section -->
+      <div class="recent-searches-box">
+        <div class="section-subtitle">Recently Searched Journeys</div>
+        <div class="recent-searches-list" id="recent-searches-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Half-Sheet Container: Live Operating Buses List -->
+  <div class="buses-half-sheet" id="buses-half-sheet">
+    <div class="sheet-drag-handle"></div>
+    <div class="sheet-header-bar">
+      <div class="sheet-title-group">
+        <h3>Live Operating Buses</h3>
+        <span id="sheet-route-summary">Central Bus Terminal ➔ Tech Valley</span>
+      </div>
+      <button class="btn btn-ghost" id="btn-close-half-sheet" style="font-size:0.85rem;padding:4px 8px;">✕ Close</button>
+    </div>
+    <div class="buses-scrollable-list" id="buses-list-container">
+      <!-- Injected dynamically by UIController -->
+    </div>
+  </div>
+
+  <!-- Bus Detail & Sequential Stoppings Progressive View -->
+  <div class="bus-detail-overlay" id="bus-detail-overlay">
+    <div class="bus-detail-panel">
+      <div class="drawer-header" style="padding:16px 20px;border-bottom:1px solid var(--border-color);margin-bottom:0;">
+        <div>
+          <h3 id="detail-bus-name" style="color:var(--primary-brand);font-size:1.2rem;font-weight:800;">City Express</h3>
+          <span id="detail-bus-number" style="font-size:0.82rem;color:var(--text-muted);">#104-A • KA-01-F-9821</span>
+        </div>
+        <button class="btn-close-drawer" id="btn-close-detail">✕</button>
+      </div>
+
+      <!-- Real-Time Speedometer (In-Bus Commuter Mode) -->
+      <div class="speedometer-card">
+        <div>
+          <div style="font-size:0.75rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;">Real-Time Onboard Speed</div>
+          <div class="speed-display">
+            <span class="speed-num" id="detail-speed-val">42</span>
+            <span class="speed-unit">km/h</span>
+          </div>
+        </div>
+        <button id="btn-set-arrival-alarm" class="btn btn-outline" style="font-size:0.82rem;">
+          🔔 Set Proximity Alarm
+        </button>
+      </div>
+
+      <!-- Delay Status Banner (Strictly in RED if delayed) -->
+      <div id="detail-status-banner" style="margin:12px 18px 0 18px;"></div>
+
+      <!-- Assigned Driver & Conductor Card -->
+      <div style="background:var(--bg-card-subtle);border:1px solid var(--border-color);border-radius:var(--radius-md);margin:12px 18px 0 18px;padding:10px 14px;display:flex;justify-content:space-between;font-size:0.82rem;">
+        <div>Driver: <strong id="detail-driver-name">Ramesh Kumar</strong></div>
+        <div>Conductor: <strong id="detail-conductor-name">Suresh Babu</strong></div>
+      </div>
+
+      <!-- Sequential Stoppings Timeline -->
+      <div class="section-subtitle" style="margin:16px 20px 0 20px;">Sequential Stoppings & Arrival Timings</div>
+      <div class="stops-timeline-wrapper" id="detail-stops-timeline">
+        <!-- Injected dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- 2. ISOLATED ROLE PORTALS                   -->
+  <!-- ========================================== -->
+  <!-- Bus Owner & Government Depot Portal -->
+  <div class="portal-container" id="portal-owner"></div>
+
+  <!-- Bus Driver & Conductor Console -->
+  <div class="portal-container" id="portal-crew"></div>
+
+  <!-- Super Administrator Command Center -->
+  <div class="portal-container" id="portal-admin"></div>
+
+  <!-- ========================================== -->
+  <!-- 3. MODALS (PROFILE, SETTINGS, 2FA, AES)    -->
+  <!-- ========================================== -->
+
+  <!-- User Profile Modal (Compliant with User Requirements) -->
+  <div class="modal-backdrop" id="profile-modal-backdrop">
+    <div class="modal-container">
+      <div class="modal-header">
+        <div class="modal-title">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+          User Identity Profile
+        </div>
+        <button class="modal-close-btn" id="btn-close-profile">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Profile Photo -->
+        <div class="profile-photo-uploader">
+          <div class="profile-avatar-large" id="prof-avatar-letter">R</div>
+          <div>
+            <h4 style="font-size:0.95rem;font-weight:700;">Profile Photo</h4>
+            <p style="font-size:0.8rem;color:var(--text-muted);">Verified Government Identity Linked</p>
+          </div>
+        </div>
+
+        <!-- Gov ID Full Name & Gender -->
+        <div class="form-group-grid">
+          <div class="form-group">
+            <label class="form-label">Name (As Per Gov ID)</label>
+            <input type="text" id="prof-input-name" class="form-input" value="Rohan Sharma" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Gender</label>
+            <select id="prof-input-gender" class="form-select">
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Mobile & Email (Verified via 2FA) -->
+        <div class="form-group-grid">
+          <div class="form-group">
+            <label class="form-label">Mobile Number</label>
+            <input type="tel" id="prof-input-mobile" class="form-input" value="+91 98765 43210" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email ID</label>
+            <input type="email" id="prof-input-email" class="form-input" value="rohan.sharma@gmail.com" />
+          </div>
+        </div>
+
+        <!-- Date of Birth & Role Badge -->
+        <div class="form-group-grid">
+          <div class="form-group">
+            <label class="form-label">Date of Birth</label>
+            <input type="date" id="prof-input-dob" class="form-input" value="1996-08-14" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Assigned Role</label>
+            <div style="padding-top:6px;">
+              <span class="badge badge-brand" id="prof-role-badge">COMMUTER</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Role Adaptive Section: License upload & safe view OR address -->
+        <div id="prof-role-specific-container"></div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-primary" id="btn-save-profile">
+          Save Profile (AES Encrypted)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div class="modal-backdrop" id="settings-modal-backdrop">
+    <div class="modal-container">
+      <div class="modal-header">
+        <div class="modal-title">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+          System Settings
+        </div>
+        <button class="modal-close-btn" id="btn-close-settings">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="settings-list">
+          <!-- Theme Switch -->
+          <div class="settings-item">
+            <div class="settings-info">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="5"></circle>
+                <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path>
+              </svg>
+              <div>
+                <strong>Dark Mode Theme</strong>
+                <p style="font-size:0.8rem;color:var(--text-muted);">Switch between #ffeee0 and warm dark</p>
+              </div>
+            </div>
+            <label class="theme-switch">
+              <input type="checkbox" id="theme-toggle-checkbox">
+              <span class="slider-round"></span>
+            </label>
+          </div>
+
+          <!-- Help -->
+          <div class="settings-item" onclick="alert('🆘 Yatra Now 24x7 Transit Helpline: 1800-200-9988\nEmail Support: support@yatranow.com')">
+            <div class="settings-info">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+              </svg>
+              <div>
+                <strong>Help & Passenger Support</strong>
+                <p style="font-size:0.8rem;color:var(--text-muted);">Transit FAQs, SOS, lost & found</p>
+              </div>
+            </div>
+            <span>➔</span>
+          </div>
+
+          <!-- About -->
+          <div class="settings-item" onclick="alert('🚌 Yatra Now v1.0.0 (PWA)\nOpen Source Smart Bus Transit Ecosystem\nEnd-to-End AES-256-GCM Encryption\nBuilt with ❤️ for commuters, drivers, and fleet owners.')">
+            <div class="settings-info">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+              </svg>
+              <div>
+                <strong>About Yatra Now</strong>
+                <p style="font-size:0.8rem;color:var(--text-muted);">Version 1.0.0 (PWA Native)</p>
+              </div>
+            </div>
+            <span>➔</span>
+          </div>
+
+          <!-- Privacy -->
+          <div class="settings-item" onclick="alert('🔒 Privacy & AES Security Policy:\nAll GPS coordinates, passenger identity data, and incident reports are encrypted with AES-256-GCM. We never share or sell personal location telemetry.')">
+            <div class="settings-info">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              </svg>
+              <div>
+                <strong>Privacy Policy</strong>
+                <p style="font-size:0.8rem;color:var(--text-muted);">AES-256 Data Protection Standards</p>
+              </div>
+            </div>
+            <span>➔</span>
+          </div>
+
+          <!-- Download Android APK -->
+          <a href="./YatraNow.apk" download="YatraNow.apk" class="settings-item" style="text-decoration:none;border-color:var(--primary-brand);background:var(--primary-glow);">
+            <div class="settings-info">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="var(--primary-brand)">
+                <path d="M17.523 15.3414c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.551 0 .9993.4482.9993.9993.0001.5511-.4483.9997-.9993.9997m-11.046 0c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.5511 0 .9993.4482.9993.9993 0 .5511-.4482.9997-.9993.9997m11.4045-6.02l1.996-3.4572c.1147-.1986.0467-.4535-.152-.5682-.1986-.1147-.4535-.0467-.5682.152l-2.0223 3.503C15.5902 7.7262 13.8513 7.29 12 7.29c-1.8513 0-3.5902.4362-5.135 1.1609L4.8427 4.948c-.1147-.1987-.3696-.2667-.5682-.152-.1987.1147-.2667.3696-.152.5682l1.996 3.4572C2.6884 10.7428.5 14.1587.5 18.0673h23c0-3.9086-2.1884-7.3245-5.6185-9.2459"/>
+              </svg>
+              <div>
+                <strong style="color:var(--primary-brand);">Download Android APK (Native App)</strong>
+                <p style="font-size:0.8rem;color:var(--text-muted);">Install Yatra Now APK on your Android device</p>
+              </div>
+            </div>
+            <span class="badge badge-brand">APK</span>
+          </a>
+
+          <!-- Supabase Cloud Connection -->
+          <div class="settings-item" id="btn-open-supabase-modal">
+            <div class="settings-info">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+                <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+              </svg>
+              <div>
+                <strong>Supabase Cloud Database</strong>
+                <p style="font-size:0.8rem;color:var(--text-muted);">Connect project to Supabase PostgreSQL</p>
+              </div>
+            </div>
+            <span>➔</span>
+          </div>
+
+          <!-- Switch Portal Account (With 2FA Authentication) -->
+          <div class="settings-item" id="btn-settings-logout">
+            <div class="settings-info">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary-brand)" stroke-width="2">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+              </svg>
+              <div>
+                <strong style="color:var(--primary-brand);">Switch Portal / 2FA Login</strong>
+                <p style="font-size:0.8rem;color:var(--text-muted);">Access Owner, Crew, or Admin Portals</p>
+              </div>
+            </div>
+            <span style="color:var(--primary-brand);font-weight:700;">LOGIN</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dedicated Login & Portal Gateway Modal (Replaces clunky prompt) -->
+  <div class="modal-backdrop" id="login-modal-backdrop">
+    <div class="modal-container" style="max-width:480px;">
+      <div class="modal-header">
+        <div class="modal-title">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+            <polyline points="10 17 15 12 10 7"></polyline>
+            <line x1="15" y1="12" x2="3" y2="12"></line>
+          </svg>
+          Portal Authentication & 2FA Gateway
+        </div>
+        <button class="modal-close-btn" id="btn-close-login">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <p style="font-size:0.85rem;color:var(--text-muted);">
+          Select your role and authenticate with AES-256-GCM encryption & Two-Step Verification:
+        </p>
+
+        <!-- Role Selection Cards -->
+        <div class="login-role-cards">
+          <div class="login-role-card active" data-role="public" data-name="Rohan Sharma" data-user="rohan@yatranow.com">
+            <div class="login-role-card-icon">🚶</div>
+            <div class="login-role-card-text">
+              <h5>Public Commuter</h5>
+              <p>yatranow.com</p>
+            </div>
+          </div>
+          <div class="login-role-card" data-role="owner" data-name="Rajesh Verma (Depot Manager)" data-user="depot.manager@yatranow.com">
+            <div class="login-role-card-icon">🏢</div>
+            <div class="login-role-card-text">
+              <h5>Bus Owner / Depot</h5>
+              <p>owner.yatranow.com</p>
+            </div>
+          </div>
+          <div class="login-role-card" data-role="crew" data-name="Ramesh Kumar (Senior Driver)" data-user="crew.ramesh@yatranow.com">
+            <div class="login-role-card-icon">🧑‍✈️</div>
+            <div class="login-role-card-text">
+              <h5>Driver & Conductor</h5>
+              <p>crew.yatranow.com</p>
+            </div>
+          </div>
+          <div class="login-role-card" data-role="admin" data-name="Super Administrator" data-user="admin@yatranow.com">
+            <div class="login-role-card-icon">🛡️</div>
+            <div class="login-role-card-text">
+              <h5>Super Admin</h5>
+              <p>admin.yatranow.com</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Email Address or Mobile Number</label>
+          <input type="text" id="login-identifier" class="form-input" value="rohan@yatranow.com" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" id="login-password" class="form-input" value="••••••••••••" />
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-primary" id="btn-submit-login-2fa" style="width:100%;">
+          🔐 Generate & Dispatch 2FA OTP
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Supabase Cloud Configuration Modal -->
+  <div class="modal-backdrop" id="supabase-modal-backdrop">
+    <div class="modal-container" style="max-width:500px;">
+      <div class="modal-header">
+        <div class="modal-title">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+            <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+            <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+          </svg>
+          Supabase Cloud Database Settings
+        </div>
+        <button class="modal-close-btn" id="btn-close-supabase">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <p style="font-size:0.85rem;color:var(--text-muted);">
+          Connect Yatra Now directly to your free Supabase PostgreSQL cloud instance.
+        </p>
+
+        <div class="form-group">
+          <label class="form-label">Supabase Project URL</label>
+          <input type="url" id="input-supabase-url" class="form-input" placeholder="https://your-project.supabase.co" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Supabase Anon Public API Key</label>
+          <input type="text" id="input-supabase-key" class="form-input" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6..." />
+        </div>
+
+        <div style="font-size:0.78rem;color:var(--text-muted);background:var(--bg-card-subtle);padding:10px;border-radius:var(--radius-sm);border:1px solid var(--border-color);">
+          💡 <strong>Tip:</strong> Execute the database script at <code>supabase/schema.sql</code> in your Supabase SQL Editor to automatically create all tables, RLS policies, and seed data.
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-outline" id="btn-test-supabase">Test Cloud Connection</button>
+        <button class="btn btn-primary" id="btn-save-supabase">Save & Sync</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Two-Step Verification (2FA) Modal (Enhanced with Countdown, Auto-Tab & Auto-Fill) -->
+  <div class="modal-backdrop" id="twofa-modal-backdrop">
+    <div class="modal-container" style="max-width:440px;">
+      <div class="modal-header">
+        <div class="modal-title">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          Two-Step Verification
+        </div>
+        <button class="modal-close-btn" id="btn-close-2fa">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <p id="twofa-target-desc" style="text-align:center;font-size:0.88rem;color:var(--text-muted);">
+          Enter the 6-digit verification code sent to your registered mobile and email.
+        </p>
+
+        <!-- Tap-to-AutoFill Demo Badge (Debugging helper for instant testing) -->
+        <div class="otp-demo-helper" id="otp-demo-pill" title="Click to auto-fill verification code">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span>🔑</span>
+            <span style="font-size:0.82rem;font-weight:700;">Demo Verification Code:</span>
+          </div>
+          <span class="otp-demo-code" id="otp-display-code">123456</span>
+          <span style="font-size:0.75rem;color:var(--primary-brand);font-weight:700;">[TAP TO FILL]</span>
+        </div>
+
+        <div class="otp-inputs-row" id="otp-inputs-container">
+          <input type="text" maxlength="1" id="otp-1" class="otp-digit-input" inputmode="numeric" autocomplete="one-time-code" autofocus />
+          <input type="text" maxlength="1" id="otp-2" class="otp-digit-input" inputmode="numeric" />
+          <input type="text" maxlength="1" id="otp-3" class="otp-digit-input" inputmode="numeric" />
+          <input type="text" maxlength="1" id="otp-4" class="otp-digit-input" inputmode="numeric" />
+          <input type="text" maxlength="1" id="otp-5" class="otp-digit-input" inputmode="numeric" />
+          <input type="text" maxlength="1" id="otp-6" class="otp-digit-input" inputmode="numeric" />
+        </div>
+
+        <div class="timer-countdown">
+          Code expires in <span id="twofa-timer-display">04:59</span>
+        </div>
+
+        <div style="text-align:center;margin-top:8px;">
+          <button id="btn-resend-otp" class="btn btn-ghost" style="font-size:0.8rem;padding:4px 10px;">
+            🔄 Resend 6-Digit Code
+          </button>
+        </div>
+      </div>
+
+      <div class="modal-footer" style="justify-content:center;">
+        <button class="btn btn-primary" id="btn-submit-otp" style="width:100%;">
+          Verify & Authenticate Session
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- AES-256 Encryption Inspector Modal -->
+  <div class="modal-backdrop" id="aes-modal-backdrop">
+    <div class="modal-container" style="max-width:600px;">
+      <div class="modal-header">
+        <div class="modal-title">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          AES-256-GCM Cryptographic Inspector
+        </div>
+        <button class="modal-close-btn" id="btn-close-aes">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <p style="font-size:0.85rem;color:var(--text-muted);">
+          Every transaction, GPS telemetry ping, and credential payload is encrypted using Galois/Counter Mode (GCM) with 96-bit initialization vectors.
+        </p>
+        <div class="cipher-code-block" id="aes-stream-container">
+          <!-- Injected dynamically -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leaflet Map Script -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <!-- Yatra Now Application Modules -->
+  <script type="module" src="./js/app.js"></script>
+
+</body>
+</html>

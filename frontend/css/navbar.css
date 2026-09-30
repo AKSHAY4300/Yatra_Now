@@ -1,0 +1,207 @@
+/* Universal Header Navigation Bar */
+/* STRICT CONSTRAINT: No Role-Switching Dropdown in Navbar! */
+
+.yatra-navbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  background: var(--bg-card);
+  border-bottom: 1.5px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  z-index: 1000;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: background-color var(--transition-fast), border-color var(--transition-fast);
+}
+
+/* Left Brand Section: App Logo + App Name Image/Typography */
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  cursor: pointer;
+  user-select: none;
+}
+
+.brand-bus-logo {
+  height: 38px;
+  width: auto;
+  object-fit: contain;
+  transition: transform var(--transition-fast);
+}
+
+.brand-bus-logo:hover {
+  transform: scale(1.05);
+}
+
+.brand-text-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-wordmark {
+  height: 28px;
+  width: auto;
+  object-fit: contain;
+}
+
+.brand-fallback-name {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--primary-brand);
+  letter-spacing: -0.5px;
+  line-height: 1;
+}
+
+.brand-tagline {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+}
+
+/* Center Route / Telemetry Status (Adaptive) */
+.navbar-center {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.network-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  background: var(--bg-card-subtle);
+  border: 1px solid var(--border-color);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--color-ontime);
+  box-shadow: 0 0 8px rgba(22, 163, 74, 0.6);
+  animation: pulse-dot 2s infinite ease-in-out;
+}
+
+.status-dot.danger {
+  background-color: var(--color-delayed);
+  box-shadow: 0 0 8px rgba(220, 38, 38, 0.6);
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+/* Right Action Buttons: Theme, Settings, Profile (NO ROLE CHANGER) */
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-icon-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-color);
+  background: var(--bg-card-subtle);
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.nav-icon-btn:hover {
+  background: var(--primary-glow);
+  color: var(--primary-brand);
+  border-color: var(--primary-brand);
+  transform: translateY(-1px);
+}
+
+.nav-profile-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 12px 3px 4px;
+  border-radius: var(--radius-full);
+  border: 1.5px solid var(--border-color);
+  background: var(--bg-card-subtle);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.nav-profile-btn:hover {
+  border-color: var(--primary-brand);
+  box-shadow: 0 2px 10px var(--primary-glow);
+}
+
+.nav-profile-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--primary-brand);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.nav-profile-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-main);
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* AES Security Indicator Pill */
+.aes-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(186, 90, 11, 0.1);
+  border: 1px solid var(--border-color);
+  padding: 4px 8px;
+  border-radius: var(--radius-full);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--primary-brand);
+  cursor: pointer;
+}
+
+@media (max-width: 600px) {
+  .yatra-navbar {
+    height: 58px;
+    padding: 0 10px;
+  }
+  .brand-tagline, .brand-wordmark, .brand-fallback-name, .network-status-pill, .nav-profile-name {
+    display: none;
+  }
+  .brand-bus-logo {
+    height: 34px;
+    width: auto;
+    max-width: 120px;
+  }
+}

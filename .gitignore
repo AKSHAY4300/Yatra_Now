@@ -1,0 +1,18 @@
+# Python Cache & Databases
+__pycache__/
+*.py[cod]
+*$py.class
+*.db
+backend/yatranow.db
+backend/__pycache__/
+
+# OS & Temporary
+.DS_Store
+Thumbs.db
+*.log
+apk_temp/
+capture_*.py
+
+# IDE & Editor
+.vscode/
+.idea/
